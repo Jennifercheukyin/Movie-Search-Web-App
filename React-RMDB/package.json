@@ -31,7 +31,9 @@
     ]
   },
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "gh-pages": "^2.1.1"
+  },
   "author": "",
   "license": "ISC",
   "description": "",
