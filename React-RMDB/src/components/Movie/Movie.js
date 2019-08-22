@@ -17,19 +17,12 @@ class Movie extends Component {
   };
 
   componentDidMount() {
-    if (localStorage.getItem(`${this.props.match.params.movieId}`)) {
-      const state = JSON.parse(
-        localStorage.getItem(`${this.props.match.params.movieId}`)
-      );
-      this.setState({ ...state });
-    } else {
-      this.setState({ loading: true });
-      //first fetch the movie, then fetch the actors for that movie
-      const endpoint = `${API_URL}movie/${
-        this.props.match.params.movieId
-      }?api_key=${API_KEY}&language=en-US`;
-      this.fetchItems(endpoint);
-    }
+    this.setState({ loading: true });
+    //first fetch the movie, then fetch the actors for that movie
+    const endpoint = `${API_URL}movie/${
+      this.props.match.params.movieId
+    }?api_key=${API_KEY}&language=en-US`;
+    this.fetchItems(endpoint);
   }
 
   fetchItems = endpoint => {
@@ -51,19 +44,11 @@ class Movie extends Component {
                 const directors = result.crew.filter(
                   memebr => memebr.job === "Director"
                 );
-                this.setState(
-                  {
-                    actors: result.cast,
-                    directors,
-                    loading: false
-                  },
-                  () => {
-                    localStorage.setItem(
-                      `${this.props.match.params.movieId}`,
-                      JSON.stringify(this.state)
-                    );
-                  }
-                );
+                this.setState({
+                  actors: result.cast,
+                  directors,
+                  loading: false
+                });
               });
           });
         }
