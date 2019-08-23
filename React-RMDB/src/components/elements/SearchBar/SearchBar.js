@@ -30,7 +30,7 @@ class SearchBar extends Component {
             className="rmdb-searchbar-input"
             placeholder="Search"
             onChange={this.doSearch}
-            value={value}
+            value={this.state.valuevalue}
           />
         </div>
       </div>

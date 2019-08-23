@@ -5,7 +5,7 @@ import {
   IMAGE_BASE_URL,
   POSTER_SIZE,
   BACKDROP_SIZE
-} from "../../config.js";
+} from "../../config";
 import HeroImage from "../elements/HeroImage/HeroImage";
 import SearchBar from "../elements/SearchBar/SearchBar";
 import FourColGrid from "../elements/FourColGrid/FourColGrid";
@@ -36,7 +36,6 @@ class Home extends Component {
   }
 
   searchItems = searchTerm => {
-    //console.log(searchTerm);
     let endpoint = "";
     this.setState({
       movies: [],
@@ -47,24 +46,24 @@ class Home extends Component {
     if (searchTerm === "") {
       endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
     } else {
-      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&page=1&query=${searchTerm}`;
+      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&query=${searchTerm}`;
     }
-
     this.fetchItems(endpoint);
   };
 
   loadMoreItems = () => {
+    // ES6 Destructuring the state
+    const { searchTerm, currentPage } = this.state;
+
     let endpoint = "";
     this.setState({ loading: true });
 
-    if (this.state.searchTerm === "") {
-      //is not searching, then continue loading the popular movies
-      endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${this
-        .state.currentPage + 1}`;
+    if (searchTerm === "") {
+      endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${currentPage +
+        1}`;
     } else {
-      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&query=${
-        this.state.searchTerm
-      }&page=${this.state.currentPage + 1}`;
+      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&query=${searchTerm}&page=${currentPage +
+        1}`;
     }
     this.fetchItems(endpoint);
   };
@@ -94,46 +93,53 @@ class Home extends Component {
       })
       .catch(error => console.error("Error:", error));
   };
+
   render() {
+    // ES6 Destructuring the state
+    const {
+      movies,
+      heroImage,
+      loading,
+      currentPage,
+      totalPages,
+      searchTerm
+    } = this.state;
+
     return (
       <div className="rmdb-home">
-        {this.state.heroImage ? (
+        {heroImage ? (
           <div>
             <HeroImage
               image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${
-                this.state.heroImage.backdrop_path
+                heroImage.backdrop_path
               }`}
-              title={this.state.heroImage.original_title}
-              text={this.state.heroImage.overview}
+              title={heroImage.original_title}
+              text={heroImage.overview}
             />
             <SearchBar callback={this.searchItems} />
           </div>
         ) : null}
-
         <div className="rmdb-home-grid">
           <FourColGrid
-            header={this.state.searchTerm ? "Search Result" : "Popular Movies"}
-            loading={this.state.loading}
+            header={searchTerm ? "Search Result" : "Popular Movies"}
+            loading={loading}
           >
-            {this.state.movies.map((element, i) => {
-              return (
-                <MovieThumb
-                  key={i}
-                  clickable={true}
-                  image={
-                    element.poster_path
-                      ? `${IMAGE_BASE_URL}${POSTER_SIZE}${element.poster_path}`
-                      : "./images/no_image.jpg"
-                  }
-                  movieId={element.id}
-                  movieName={element.original_title}
-                />
-              );
-            })}
+            {movies.map((element, i) => (
+              <MovieThumb
+                key={i}
+                clickable={true}
+                image={
+                  element.poster_path
+                    ? `${IMAGE_BASE_URL}${POSTER_SIZE}${element.poster_path}`
+                    : "./images/no_image.jpg"
+                }
+                movieId={element.id}
+                movieName={element.original_title}
+              />
+            ))}
           </FourColGrid>
-          {this.state.loading ? <Spinner /> : null}
-          {this.state.currentPage < this.state.totalPages &&
-          !this.state.loading ? (
+          {loading ? <Spinner /> : null}
+          {currentPage <= totalPages && !loading ? (
             <LoadMoreBtn text="Load More" onClick={this.loadMoreItems} />
           ) : null}
         </div>
