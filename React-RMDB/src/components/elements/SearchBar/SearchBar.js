@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import FontAwesome from "react-fontawesome";
 import "./SearchBar.css";
+import PropTypes from "prop-types";
 
 class SearchBar extends Component {
   state = {
@@ -9,11 +10,14 @@ class SearchBar extends Component {
 
   timeout = null;
   doSearch = event => {
+    //destructuring prop
+    const { callback } = this.props;
+
     this.setState({ value: event.target.value });
     clearTimeout(this.timeout);
 
     this.timeout = setTimeout(() => {
-      this.props.callback(this.state.value);
+      callback(this.state.value);
     }, 500);
   };
   render() {
@@ -26,12 +30,15 @@ class SearchBar extends Component {
             className="rmdb-searchbar-input"
             placeholder="Search"
             onChange={this.doSearch}
-            value={this.state.value}
+            value={value}
           />
         </div>
       </div>
     );
   }
 }
+SearchBar.propTypes = {
+  callback: PropTypes.func
+};
 
 export default SearchBar;

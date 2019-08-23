@@ -1,6 +1,7 @@
 import React from "react";
 import { IMAGE_BASE_URL } from "../../../config";
 import "./Actor.css";
+import PropTypes from "prop-types";
 
 const Actor = ({ actor }) => {
   const POSTER_SIZE = "w154";
@@ -19,5 +20,9 @@ const Actor = ({ actor }) => {
       <span className="rmdb-actor-character">{actor.character}</span>
     </div>
   );
+};
+
+Actor.propTypes = {
+  actor: PropTypes.object
 };
 export default Actor;
